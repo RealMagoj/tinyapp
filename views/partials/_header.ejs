@@ -11,18 +11,12 @@
       </div>
     </div>
     <% if (user === undefined) { %>
-        <div>
-          <a href="/register">
-            <button class="btn btn-outline-dark mr-3">Register</button>
-          </a>
-        </div>
-        <div>
-          <a href="/login">
-            <button class="btn btn-outline-dark">Login</button>
-          </a>
-        </div>
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/login">Login</a>
+        <a class="nav-item nav-link" href="/register">Register</a>
+      </div>
     <% } else { %>
-      <div class="mr-3">Logged In As: <%= user.email %></div>
+      <div class="mr-3">Logged In As: <%= user.email %>!</div>
       <form method="POST" action="/logout">
         <button class="btn btn-outline-dark" type="submit">Logout</button>
       </form>

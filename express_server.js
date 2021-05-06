@@ -50,12 +50,28 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  const {email, password} = req.body;
+  const validated = validateUser(email, password);
+  if (validated.error === 'User already exists.') {
+    let found;
+    for (const user in users) {
+      if (users[user].email === email) {
+        found = users[user];
+      }
+    }
+    if (found.password === password) {
+      res.cookie('user_id', found.id);
+      res.redirect(`/urls`);
+    } else {
+      res.status(403).send("Incorrect password");
+    }
+  } else {
+    res.status(403).send("User not found");
+  }
 })
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 })
 
