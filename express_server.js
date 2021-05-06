@@ -32,7 +32,7 @@ function generateRandomString() {
   return Math.random().toString(20).substr(2, 6);
 }
 
-function validateRegistration(email, password) {
+function validateUser(email, password) {
   if (email === "" || password === "") {
     return { error: "Email and password must not be blank.", success: null };
   }
@@ -44,14 +44,19 @@ function validateRegistration(email, password) {
   return { error: null, success: "User registered." };
 }
 
+app.get("/login", (req, res) => {
+  const templateVars = { user: users[req.cookies["user_id"]] };
+  res.render("login", templateVars);
+});
+
 app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
-  res.redirect('/urls')
+  res.redirect('/urls');
 })
 
 app.post("/logout", (req, res) => {
   res.clearCookie('username');
-  res.redirect('/urls')
+  res.redirect('/urls');
 })
 
 app.get("/register", (req, res) => {
@@ -61,7 +66,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
-  const validated = validateRegistration(email, password);
+  const validated = validateUser(email, password);
   if (validated.success) {
     const id = generateRandomString();
     users[id] =  {
