@@ -6,6 +6,7 @@ app.set("view engine", "ejs");
 
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -69,7 +70,7 @@ app.post("/login", (req, res) => {
         found = users[user];
       }
     }
-    if (found.password === password) {
+    if (bcrypt.compareSync(password, found.password)) {
       res.cookie('user_id', found.id);
       res.redirect(`/urls`);
     } else {
@@ -98,7 +99,7 @@ app.post("/register", (req, res) => {
     users[id] =  {
       id,
       email,
-      password
+      password: bcrypt.hashSync(password, 10)
     }
     res.cookie('user_id', id);
     res.redirect(`/urls`);
@@ -108,6 +109,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  console.log(users[req.cookies["user_id"]]);
   const templateVars = {
     urls: urlsForUser(req.cookies.user_id),
     user: users[req.cookies["user_id"]]
