@@ -1,6 +1,10 @@
+// Generate a random string
+
 function generateRandomString() {
   return Math.random().toString(20).substr(2, 6);
 }
+
+// Retreive user data with user email address
 
 const getUserByEmail = function(email, database) {
   let found;
@@ -11,6 +15,8 @@ const getUserByEmail = function(email, database) {
   }
   return found;
 };
+
+// Validate user email address and password
 
 function validateUser(email, password, users) {
   if (email === "" || password === "") {
@@ -23,6 +29,8 @@ function validateUser(email, password, users) {
   }
   return { error: null, success: "User registered." };
 }
+
+// Retreive user urls with user id
 
 function urlsForUser(id, urlDatabase) {
   const urls = {};

@@ -33,12 +33,18 @@ const users = {
     email: "user@example.com", 
     password: "purple-monkey-dinosaur"
   },
- "user2RandomID": {
+  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
 }
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
+// GET //
 
 app.get("/", (req, res) => {
   res.redirect(`/register`);
@@ -48,6 +54,43 @@ app.get("/login", (req, res) => {
   const templateVars = { user: users[req.session["user_id"]] };
   res.render("login", templateVars);
 });
+
+app.get("/register", (req, res) => {
+  const templateVars = { user: users[req.session["user_id"]] };
+  res.render("register", templateVars);
+});
+
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    urls: urlsForUser(req.session.user_id, urlDatabase),
+    user: users[req.session["user_id"]]
+  };
+  res.render("urls_index", templateVars);
+});
+
+app.get("/urls/new", (req, res) => {
+  const templateVars = { user: users[req.session["user_id"]] };
+  if (templateVars.user === undefined) {
+    return res.redirect("/login");
+  }
+  res.render("urls_new", templateVars);
+});
+
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { 
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL].longURL,
+    urlID: urlDatabase[req.params.shortURL].userID,
+    user: users[req.session["user_id"]] 
+  };
+  res.render("urls_show", templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  res.redirect(urlDatabase[req.params.shortURL].longURL);
+});
+
+// POST //
 
 app.post("/login", (req, res) => {
   const {email, password} = req.body;
@@ -70,11 +113,6 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 })
 
-app.get("/register", (req, res) => {
-  const templateVars = { user: users[req.session["user_id"]] };
-  res.render("register", templateVars);
-});
-
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
   const validated = validateUser(email, password, users);
@@ -92,14 +130,6 @@ app.post("/register", (req, res) => {
   }
 });
 
-app.get("/urls", (req, res) => {
-  const templateVars = {
-    urls: urlsForUser(req.session.user_id, urlDatabase),
-    user: users[req.session["user_id"]]
-  };
-  res.render("urls_index", templateVars);
-});
-
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = {
@@ -107,24 +137,6 @@ app.post("/urls", (req, res) => {
     userID: req.session.user_id
   }
   res.redirect(`/urls/${shortURL}`);
-});
-
-app.get("/urls/new", (req, res) => {
-  const templateVars = { user: users[req.session["user_id"]] };
-  if (templateVars.user === undefined) {
-    return res.redirect("/login");
-  }
-  res.render("urls_new", templateVars);
-});
-
-app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    urlID: urlDatabase[req.params.shortURL].userID,
-    user: users[req.session["user_id"]] 
-  };
-  res.render("urls_show", templateVars);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
@@ -145,12 +157,4 @@ app.post("/urls/:id", (req, res) => {
     urlDatabase[req.params.id].longURL = req.body.longURL;
   }
   res.redirect(`/urls`);
-});
-
-app.get("/u/:shortURL", (req, res) => {
-  res.redirect(urlDatabase[req.params.shortURL].longURL);
-});
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
