@@ -40,6 +40,10 @@ const users = {
   }
 }
 
+app.get("/", (req, res) => {
+  res.redirect(`/register`);
+});
+
 app.get("/login", (req, res) => {
   const templateVars = { user: users[req.session["user_id"]] };
   res.render("login", templateVars);
