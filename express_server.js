@@ -3,17 +3,17 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 
-const app = express();
-const PORT = 8080; // default port 8080
-
-app.set("view engine", "ejs");
-
 const {
   generateRandomString,
   getUserByEmail,
   validateUser,
   urlsForUser
 } = require('./helpers');
+
+const app = express();
+const PORT = 8080; // default port 8080
+
+app.set("view engine", "ejs");
 
 app.use(cookieSession({
   name: 'session',
