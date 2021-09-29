@@ -105,10 +105,10 @@ app.post("/login", (req, res) => {
       req.session.user_id = found.id;
       res.redirect(`/urls`);
     } else {
-      res.status(403).send("Incorrect password");
+      res.render('error', { user: undefined, error_message: "Incorrect password"});
     }
   } else {
-    res.status(403).send("User not found");
+    res.render('error', { user: undefined, error_message: "User not found"});
   }
 })
 
@@ -130,7 +130,7 @@ app.post("/register", (req, res) => {
     req.session.user_id = id;
     res.redirect(`/urls`);
   } else {
-    res.status(400).send(validated.error);
+    res.render('error', { user: undefined, error_message: validated.error});
   }
 });
 
