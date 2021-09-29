@@ -47,7 +47,11 @@ app.listen(PORT, () => {
 // GET //
 
 app.get("/", (req, res) => {
-  res.redirect(`/register`);
+  if (req.session.user_id) {
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(`/login`);
+  }
 });
 
 app.get("/login", (req, res) => {
